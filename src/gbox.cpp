@@ -4,15 +4,29 @@
 #include <filesystem>
 #include <fstream>
 #include <cstring>
+#include <cstdlib> // For std::system
+
 const std::string projectFolderPath = "./python/New-Project";
 const std::string mainFilePath = projectFolderPath + "/main.py";
 const std::string gboxLibsFilePath = projectFolderPath + "/gbox_libs.py";
+const std::string requireFilePath = projectFolderPath + "/require.txt";
 
 void createProject() {
     std::filesystem::path folderPath = projectFolderPath;
     try {
         if (std::filesystem::create_directory(folderPath)) {
             std::cout << "フォルダが作成されました。\n";
+
+            // Create a sample require.txt file with dependencies
+            std::ofstream requireFile(requireFilePath);
+            if (requireFile.is_open()) {
+                requireFile << "requests==2.26.0\n";
+                requireFile.close();
+                std::cout << "require.txt ファイルが作成されました。\n";
+            } else {
+                std::cerr << "require.txt ファイルが作成できませんでした。\n";
+            }
+
         } else {
             std::cout << "フォルダの作成に失敗しました。\n";
         }
@@ -32,7 +46,6 @@ void createProject() {
     };
 
     writeFile(mainFilePath, "import gbox_libs as gbox_libs\n\nclass Example():\n   def __init__(self) -> None:\n       super().__init__()\n       # スクリプトをここに書いてください\n\nExample()");
-    writeFile(gboxLibsFilePath, "import tkinter as tk\nimport requests\n\n#gbox_libs 1.0\n\nclass gb_tk():\n    // ... (your existing content)");
 }
 
 void runProject(const std::string& appName) {
@@ -47,6 +60,16 @@ int main(int argc, char** argv) {
         std::string appName;
         std::cout << "フォルダ名を入力:";
         std::cin >> appName;
+
+        if (argc > 1 && strcmp(argv[1], "--install") == 0) {
+            std::string pipInstallCommand = "./bin/python3 -m pip install -r ./python/" + appName + "/require.txt";
+            int pipResult = std::system(pipInstallCommand.c_str());
+            if (pipResult == 0) {
+                std::cout << "依存関係がインストールされました。\n";
+            } else {
+                std::cerr << "依存関係のインストールに失敗しました。\n";
+            }
+        }
         runProject(appName);
     }
 

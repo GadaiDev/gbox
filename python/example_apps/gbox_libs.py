@@ -1,6 +1,8 @@
 import tkinter as tk
 import requests
 
+#gbox_libs 1.0
+
 class gb_tk():
     def __init__(self,title:str,size:tuple,resizable:bool):
         self.app = tk.Tk()

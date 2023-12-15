@@ -57,11 +57,8 @@ int main(int argc, char** argv) {
     if (argc > 1 && strcmp(argv[1], "-m") == 0) {
         createProject();
     } else {
-        std::string appName;
-        std::cout << "フォルダ名を入力:";
-        std::cin >> appName;
-
-        if (argc > 1 && strcmp(argv[1], "--install") == 0) {
+        std::string appName(argv[1]);
+        if (argc > 2 && strcmp(argv[2], "--install") == 0) {
             std::string pipInstallCommand = "./bin/python3 -m pip install -r ./python/" + appName + "/require.txt";
             int pipResult = std::system(pipInstallCommand.c_str());
             if (pipResult == 0) {
